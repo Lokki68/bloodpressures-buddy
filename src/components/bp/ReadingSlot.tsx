@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Reading } from "@/lib/bp-storage";
+
 
 type Props = {
   index: number;
@@ -18,7 +19,15 @@ export function ReadingSlot({ index, reading, onSave, onDelete }: Props) {
   const [pulse, setPulse] = useState(reading?.pulse ? String(reading.pulse) : "");
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    setSystolic(reading ? String(reading.systolic) : "");
+    setDiastolic(reading ? String(reading.diastolic) : "");
+    setPulse(reading?.pulse ? String(reading.pulse) : "");
+    setError(null);
+  }, [reading]);
+
   const open = editing || !reading;
+
 
   const submit = () => {
     const sys = Number(systolic);
