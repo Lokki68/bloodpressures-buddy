@@ -71,14 +71,22 @@ function Index() {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
-    setData(loadData());
-    setHydrated(true);
+    let active = true;
+    void loadData().then((loaded) => {
+      if (!active) return;
+      setData(loaded);
+      setHydrated(true);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const update = (next: BpData) => {
     setData(next);
-    saveData(next);
+    void saveData(next);
   };
+
 
   const setReading = (key: string, reading: Reading) => {
     update({ ...data, readings: { ...data.readings, [key]: reading } });
