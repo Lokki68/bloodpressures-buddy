@@ -19,7 +19,15 @@ export function ReadingSlot({ index, reading, onSave, onDelete }: Props) {
   const [pulse, setPulse] = useState(reading?.pulse ? String(reading.pulse) : "");
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    setSystolic(reading ? String(reading.systolic) : "");
+    setDiastolic(reading ? String(reading.diastolic) : "");
+    setPulse(reading?.pulse ? String(reading.pulse) : "");
+    setError(null);
+  }, [reading]);
+
   const open = editing || !reading;
+
 
   const submit = () => {
     const sys = Number(systolic);
