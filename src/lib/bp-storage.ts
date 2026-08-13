@@ -1,4 +1,13 @@
+import {
+  CIPHER_PREFIX,
+  decryptString,
+  destroyKey,
+  encryptString,
+  isSupported,
+} from "./bp-crypto";
+
 export type Period = "morning" | "evening";
+
 
 export type Reading = {
   systolic: number;
@@ -31,31 +40,45 @@ export const emptyData = (): BpData => ({
   readings: {},
 });
 
-export function loadData(): BpData {
+function normalize(parsed: BpData): BpData {
+  return {
+    patientName: parsed.patientName ?? "",
+    startedAt: parsed.startedAt ?? new Date().toISOString(),
+    readings: parsed.readings ?? {},
+  };
+}
+
+export async function loadData(): Promise<BpData> {
   if (typeof window === "undefined") return emptyData();
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return emptyData();
-    const parsed = JSON.parse(raw) as BpData;
-    return {
-      patientName: parsed.patientName ?? "",
-      startedAt: parsed.startedAt ?? new Date().toISOString(),
-      readings: parsed.readings ?? {},
-    };
+    const json = raw.startsWith(CIPHER_PREFIX)
+      ? await decryptString(raw)
+      : raw; // données historiques en clair
+    return normalize(JSON.parse(json) as BpData);
   } catch {
     return emptyData();
   }
 }
 
-export function saveData(data: BpData) {
+export async function saveData(data: BpData) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  const json = JSON.stringify(data);
+  try {
+    if (!isSupported()) throw new Error("crypto indisponible");
+    window.localStorage.setItem(STORAGE_KEY, await encryptString(json));
+  } catch {
+    window.localStorage.setItem(STORAGE_KEY, json);
+  }
 }
 
-export function clearData() {
+export async function clearData() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(STORAGE_KEY);
+  await destroyKey();
 }
+
 
 const avg = (values: number[]) =>
   values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
