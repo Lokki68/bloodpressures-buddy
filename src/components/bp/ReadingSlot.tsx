@@ -36,7 +36,7 @@ export function ReadingSlot({ index, reading, onSave, onDelete }: Props) {
     onSave({
       systolic: sys,
       diastolic: dia,
-      pulse: pul && pul > 20 && pul < 250 ? pul : undefined,
+      ...(pul && pul > 20 && pul < 250 ? { pulse: pul } : {}),
       recordedAt: reading?.recordedAt ?? new Date().toISOString(),
     });
     setEditing(false);
