@@ -113,11 +113,12 @@ function Index() {
   };
 
   const confirmDelete = () => {
-    clearData();
+    void clearData();
     setData(emptyData());
     setConfirmOpen(false);
-    toast.success("Relevé supprimé. Vous pouvez démarrer une nouvelle série.");
+    toast.success("Relevé supprimé et clé de chiffrement détruite.");
   };
+
 
   return (
     <div className="min-h-screen bg-calm">
@@ -220,9 +221,11 @@ function Index() {
         <section className="rounded-2xl border border-border bg-card/60 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs text-muted-foreground">
-              Vos données restent sur cet appareil (stockage local du navigateur) et
-              sont effacées après téléchargement, avec votre accord.
+              Vos données restent sur cet appareil, chiffrées (AES-256-GCM) dans le
+              stockage local du navigateur, et sont effacées après téléchargement,
+              avec votre accord.
             </p>
+
             <Button
               variant="outline"
               size="sm"
