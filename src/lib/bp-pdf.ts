@@ -64,10 +64,19 @@ export async function downloadReportPdf(data: BpData) {
   doc.text("Détail des mesures", left, y);
   y += 6;
 
-  const cols = [left, left + 42, left + 78, left + 110, left + 142];
-  const header = ["Jour / Période", "Mesure", "Systole", "Diastole", "Pouls"];
+  const cols = {
+    label: left,
+    n: left + 42,
+    sys: left + 78,
+    dia: left + 110,
+    pulse: left + 142,
+  };
   doc.setFontSize(9);
-  header.forEach((h, i) => doc.text(h, cols[i], y));
+  doc.text("Jour / Période", cols.label, y);
+  doc.text("Mesure", cols.n, y);
+  doc.text("Systole", cols.sys, y);
+  doc.text("Diastole", cols.dia, y);
+  doc.text("Pouls", cols.pulse, y);
   y += 2;
   doc.line(left, y, left + 174, y);
   y += 5;
@@ -82,11 +91,11 @@ export async function downloadReportPdf(data: BpData) {
           doc.addPage();
           y = 22;
         }
-        doc.text(slot === 0 ? label : "", cols[0], y);
-        doc.text(`n°${slot + 1}`, cols[1], y);
-        doc.text(r ? String(r.systolic) : "—", cols[2], y);
-        doc.text(r ? String(r.diastolic) : "—", cols[3], y);
-        doc.text(r?.pulse ? String(r.pulse) : "—", cols[4], y);
+        doc.text(slot === 0 ? label : "", cols.label, y);
+        doc.text(`n°${slot + 1}`, cols.n, y);
+        doc.text(r ? String(r.systolic) : "—", cols.sys, y);
+        doc.text(r ? String(r.diastolic) : "—", cols.dia, y);
+        doc.text(r?.pulse ? String(r.pulse) : "—", cols.pulse, y);
         y += 5.5;
       }
       const s = statsFor(collect(data, { day, period }));
@@ -95,7 +104,7 @@ export async function downloadReportPdf(data: BpData) {
         s.count
           ? `Moyenne ${periodLabel(period).toLowerCase()} : ${s.systolic}/${s.diastolic} mmHg`
           : `Moyenne ${periodLabel(period).toLowerCase()} : —`,
-        cols[1],
+        cols.n,
         y,
       );
       doc.setFont("helvetica", "normal");
