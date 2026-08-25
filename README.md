@@ -1,3 +1,5 @@
+Test Lovable
+
 # Mon Rythme Cardiaque
 
 Je souhaite une application de contrôle de tension artérielle. Il s'agit de prises de tension régulières, trois le matin et trois le soir pendant 3 jours. A la fin de ces trois jours, il faut calculer une moyenne et proposer le téléchargement du compte rendu au format PDF. Une sauvegarde des données dans le localStorage et les supprimer après le téléchargement du pdf, une demande avant suppression serait un plus.
